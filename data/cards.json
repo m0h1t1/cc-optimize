@@ -1,0 +1,244 @@
+[
+  {
+    "id": "amex_gold",
+    "name": "American Express Gold",
+    "network": "AMEX",
+    "reward_type": "points",
+    "point_value_cpp": 2.0,
+    "base_rate": 1,
+    "category_rates": {
+      "dining": 4,
+      "grocery": 4,
+      "travel": 3,
+      "streaming": 3
+    }
+  },
+  {
+    "id": "amex_platinum",
+    "name": "American Express Platinum",
+    "network": "AMEX",
+    "reward_type": "points",
+    "point_value_cpp": 2.0,
+    "base_rate": 1,
+    "category_rates": {
+      "travel": 5,
+      "flights": 5,
+      "hotels": 5,
+      "streaming": 1
+    }
+  },
+  {
+    "id": "amex_blue_cash_preferred",
+    "name": "Amex Blue Cash Preferred",
+    "network": "AMEX",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 1,
+    "category_rates": {
+      "grocery": 6,
+      "streaming": 6,
+      "transit": 3,
+      "gas": 3
+    }
+  },
+  {
+    "id": "chase_sapphire_preferred",
+    "name": "Chase Sapphire Preferred",
+    "network": "VISA",
+    "reward_type": "points",
+    "point_value_cpp": 1.9,
+    "base_rate": 1,
+    "category_rates": {
+      "dining": 3,
+      "travel": 2,
+      "streaming": 3,
+      "grocery": 3
+    }
+  },
+  {
+    "id": "chase_sapphire_reserve",
+    "name": "Chase Sapphire Reserve",
+    "network": "VISA",
+    "reward_type": "points",
+    "point_value_cpp": 1.9,
+    "base_rate": 1,
+    "category_rates": {
+      "dining": 3,
+      "travel": 3,
+      "flights": 5,
+      "streaming": 3
+    }
+  },
+  {
+    "id": "chase_freedom_unlimited",
+    "name": "Chase Freedom Unlimited",
+    "network": "VISA",
+    "reward_type": "points",
+    "point_value_cpp": 1.9,
+    "base_rate": 1.5,
+    "category_rates": {
+      "dining": 3,
+      "drugstore": 3
+    }
+  },
+  {
+    "id": "chase_freedom_flex",
+    "name": "Chase Freedom Flex",
+    "network": "VISA",
+    "reward_type": "points",
+    "point_value_cpp": 1.9,
+    "base_rate": 1,
+    "category_rates": {
+      "dining": 3,
+      "drugstore": 3,
+      "travel": 5
+    }
+  },
+  {
+    "id": "citi_double_cash",
+    "name": "Citi Double Cash",
+    "network": "MASTERCARD",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 2,
+    "category_rates": {}
+  },
+  {
+    "id": "citi_custom_cash",
+    "name": "Citi Custom Cash",
+    "network": "MASTERCARD",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 1,
+    "category_rates": {
+      "dining": 5,
+      "grocery": 5,
+      "gas": 5,
+      "travel": 5,
+      "streaming": 5,
+      "drugstore": 5,
+      "fitness": 5
+    }
+  },
+  {
+    "id": "capital_one_venture_x",
+    "name": "Capital One Venture X",
+    "network": "VISA",
+    "reward_type": "points",
+    "point_value_cpp": 1.7,
+    "base_rate": 2,
+    "category_rates": {
+      "travel": 5,
+      "flights": 5,
+      "hotels": 10
+    }
+  },
+  {
+    "id": "capital_one_quicksilver",
+    "name": "Capital One Quicksilver",
+    "network": "VISA",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 1.5,
+    "category_rates": {}
+  },
+  {
+    "id": "discover_it",
+    "name": "Discover it Cash Back",
+    "network": "DISCOVER",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 1,
+    "category_rates": {}
+  },
+  {
+    "id": "apple_card",
+    "name": "Apple Card",
+    "network": "MASTERCARD",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 1,
+    "category_rates": {
+      "apple": 3
+    }
+  },
+  {
+    "id": "wells_fargo_active_cash",
+    "name": "Wells Fargo Active Cash",
+    "network": "VISA",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 2,
+    "category_rates": {}
+  },
+  {
+    "id": "bilt_mastercard",
+    "name": "Bilt Mastercard",
+    "network": "MASTERCARD",
+    "reward_type": "points",
+    "point_value_cpp": 1.7,
+    "base_rate": 1,
+    "category_rates": {
+      "dining": 3,
+      "travel": 2,
+      "rent": 1
+    }
+  },
+  {
+    "id": "us_bank_altitude_reserve",
+    "name": "US Bank Altitude Reserve",
+    "network": "VISA",
+    "reward_type": "points",
+    "point_value_cpp": 1.5,
+    "base_rate": 1,
+    "category_rates": {
+      "travel": 3,
+      "dining": 3,
+      "mobile_wallet": 3
+    }
+  },
+  {
+    "id": "boa_travel_rewards",
+    "name": "Bank of America Travel Rewards",
+    "network": "VISA",
+    "reward_type": "points",
+    "point_value_cpp": 1.0,
+    "base_rate": 1.5,
+    "category_rates": {}
+  },
+  {
+    "id": "amazon_prime_visa",
+    "name": "Amazon Prime Visa",
+    "network": "VISA",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 1,
+    "category_rates": {
+      "amazon": 5,
+      "whole_foods": 5,
+      "dining": 2,
+      "gas": 2,
+      "transit": 2
+    }
+  },
+  {
+    "id": "paypal_cashback",
+    "name": "PayPal Cashback Mastercard",
+    "network": "MASTERCARD",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 2,
+    "category_rates": {
+      "paypal": 3
+    }
+  },
+  {
+    "id": "fidelity_rewards_visa",
+    "name": "Fidelity Rewards Visa",
+    "network": "VISA",
+    "reward_type": "cashback",
+    "point_value_cpp": 1.0,
+    "base_rate": 2,
+    "category_rates": {}
+  }
+]
