@@ -10,16 +10,16 @@
     body {
       width: 360px;
       min-height: 420px;
-      background: #1a1a2e;
-      color: #ccd6f6;
+      background: #ffffff;
+      color: #2d3a2e;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-size: 13px;
     }
 
     .header {
-      padding: 16px;
-      background: #16213e;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 20px 16px;
+      background: linear-gradient(180deg, #3a7d4a 0%, #4a9c5e 100%);
+      border-bottom: none;
       text-align: center;
     }
     .header h1 {
@@ -30,7 +30,7 @@
     }
     .header p {
       font-size: 11px;
-      color: #8892b0;
+      color: rgba(255,255,255,0.75);
       margin-top: 4px;
     }
 
@@ -41,7 +41,7 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #64ffda;
+      color: #4a9c5e;
       margin-bottom: 8px;
       font-weight: 600;
     }
@@ -50,19 +50,19 @@
     #card-search {
       width: 100%;
       padding: 10px 12px;
-      background: #16213e;
-      border: 1px solid rgba(255,255,255,0.1);
+      background: #f7faf7;
+      border: 1px solid #d6e5d8;
       border-radius: 8px;
-      color: #ccd6f6;
+      color: #2d3a2e;
       font-size: 13px;
       outline: none;
       transition: border-color 0.2s;
     }
     #card-search:focus {
-      border-color: #64ffda;
+      border-color: #4a9c5e;
     }
     #card-search::placeholder {
-      color: #5a6380;
+      color: #a3b5a5;
     }
 
     #search-results {
@@ -70,9 +70,9 @@
       max-height: 180px;
       overflow-y: auto;
       margin-top: 4px;
-      background: #16213e;
+      background: #f7faf7;
       border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.08);
+      border: 1px solid #e4ece5;
     }
     .search-item {
       padding: 10px 12px;
@@ -83,7 +83,7 @@
       transition: background 0.15s;
     }
     .search-item:hover {
-      background: rgba(100,255,218,0.08);
+      background: #edf5ee;
     }
 
     /* Cards */
@@ -92,7 +92,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid #f0f5f0;
     }
     .card-item:last-child { border-bottom: none; }
 
@@ -114,59 +114,190 @@
     .card-network.amex { background: #006fcf; color: #fff; }
     .card-network.discover { background: #ff6000; color: #fff; }
 
-    .card-name { font-size: 13px; }
+    .card-name {
+      font-size: 13px;
+      color: #2d3a2e;
+    }
 
     .remove-btn {
       background: none;
       border: none;
-      color: #8892b0;
+      color: #b0bfb2;
       font-size: 18px;
       cursor: pointer;
       padding: 0 4px;
       line-height: 1;
       transition: color 0.15s;
     }
-    .remove-btn:hover { color: #ff6b6b; }
+    .remove-btn:hover { color: #d44; }
 
-    /* Rank */
-    .rank-row {
+    /* Merchant detection */
+    .merchant-info {
       display: flex;
       align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
       gap: 8px;
+      padding: 8px 12px;
+      background: #edf5ee;
+      border-radius: 8px;
+      margin-bottom: 12px;
     }
-    .rank-row:last-child { border-bottom: none; }
-
-    .rank-category {
-      font-size: 11px;
-      text-transform: capitalize;
-      color: #8892b0;
-      width: 70px;
+    .merchant-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4a9c5e;
       flex-shrink: 0;
     }
-    .rank-card {
-      flex: 1;
+    .merchant-domain {
       font-size: 12px;
-      color: #ccd6f6;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      color: #2d3a2e;
+      font-weight: 500;
     }
-    .rank-rate {
-      font-weight: 700;
-      color: #64ffda;
+    .merchant-category {
+      font-size: 10px;
+      color: #3a7d4a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: auto;
+      background: #dceede;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .no-merchant {
+      text-align: center;
+      color: #a3b5a5;
       font-size: 12px;
-      white-space: nowrap;
+      padding: 8px 0;
+    }
+
+    /* Find best card button */
+    .find-btn {
+      width: 100%;
+      padding: 12px;
+      background: #4a9c5e;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.3px;
+    }
+    .find-btn:hover { background: #3d8a4f; }
+    .find-btn:active { transform: scale(0.98); }
+    .find-btn:disabled {
+      background: #c8d9ca;
+      color: #fff;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Card result display */
+    .result-container {
+      display: none;
+      margin-top: 12px;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-visual {
+      width: 100%;
+      aspect-ratio: 1.586;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .card-visual::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .card-visual.visa { background: linear-gradient(135deg, #1a1f71 0%, #2d3494 50%, #1a1f71 100%); }
+    .card-visual.mastercard { background: linear-gradient(135deg, #1a1a2e 0%, #2d1b3d 50%, #1a1a2e 100%); }
+    .card-visual.amex { background: linear-gradient(135deg, #006fcf 0%, #0088ff 50%, #006fcf 100%); }
+    .card-visual.discover { background: linear-gradient(135deg, #2d2d2d 0%, #444 50%, #2d2d2d 100%); }
+
+    .card-visual-network {
+      font-size: 14px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.9);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      position: relative;
+    }
+    .card-visual-chip {
+      width: 36px;
+      height: 26px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, #d4af37, #c5a028);
+      position: relative;
+    }
+    .card-visual-chip::after {
+      content: '';
+      position: absolute;
+      top: 4px; left: 4px; right: 4px; bottom: 4px;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 2px;
+    }
+    .card-visual-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.95);
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+
+    .result-details {
+      margin-top: 12px;
+      text-align: center;
+    }
+    .result-card-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a2e1a;
+      margin-bottom: 4px;
+    }
+    .result-rate {
+      font-size: 24px;
+      font-weight: 800;
+      color: #3a7d4a;
+      margin: 8px 0 4px;
+    }
+    .result-reason {
+      font-size: 12px;
+      color: #7a8f7c;
+    }
+    .result-disclaimer {
+      font-size: 10px;
+      color: #a3b5a5;
+      font-style: italic;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #e4ece5;
     }
 
     .empty-state {
       text-align: center;
       padding: 16px 0;
-      color: #5a6380;
+      color: #a3b5a5;
     }
     .hint {
-      color: #5a6380;
+      color: #a3b5a5;
       font-size: 12px;
       text-align: center;
       padding: 8px 0;
@@ -174,7 +305,7 @@
 
     .divider {
       border: none;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid #e4ece5;
       margin: 0;
     }
   </style>
@@ -201,8 +332,10 @@
   <hr class="divider" />
 
   <div class="section">
-    <div class="section-title">Best Card by Category</div>
-    <div id="quick-rank"></div>
+    <div class="section-title">Best Card for This Site</div>
+    <div id="merchant-status"></div>
+    <button id="find-best-btn" class="find-btn" disabled>Find My Best Card</button>
+    <div id="card-result" class="result-container"></div>
   </div>
 
   <script src="dist/popup.js"></script>

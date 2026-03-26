@@ -3,7 +3,7 @@
   "name": "MoPay — Credit Card Optimizer",
   "version": "1.0.0",
   "description": "Automatically recommends the best credit card to maximize rewards at checkout.",
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "tabs"],
   "background": {
     "service_worker": "dist/background.js"
   },
