@@ -8,6 +8,7 @@ let wallet: UserStorage = {
   userCards: [],
   pointValues: {},
   onboardingComplete: false,
+  allCardsAdded: false,
 };
 
 let detectedDomain: string | null = null;
@@ -25,6 +26,10 @@ async function loadWallet(): Promise<void> {
 
 async function addCard(cardId: string): Promise<void> {
   wallet = await chrome.runtime.sendMessage({ type: "ADD_CARD", cardId });
+  if (!wallet.onboardingComplete && wallet.userCards.length >= 2) {
+    chrome.runtime.sendMessage({ type: "SET_ONBOARDING_COMPLETE" });
+    wallet.onboardingComplete = true;
+  }
   render();
 }
 
@@ -196,26 +201,89 @@ function showBestCard() {
   `;
 }
 
+function renderFTUE() {
+  const ftue = $("onboarding-ftue");
+  if (!wallet.onboardingComplete && wallet.userCards.length < 2) {
+    ftue.style.display = "block";
+    if (wallet.userCards.length === 1) {
+      ftue.querySelector(".ftue-title")!.textContent = "Great! Now add one more card";
+      ftue.querySelector(".ftue-subtitle")!.textContent = "MoPay needs at least two cards to compare and find your best option.";
+    }
+  } else {
+    ftue.style.display = "none";
+  }
+}
+
+function renderAllCardsToggle() {
+  const container = $("all-cards-toggle");
+  const checkbox = $("all-cards-checkbox") as HTMLInputElement;
+  if (wallet.userCards.length > 0) {
+    container.style.display = "block";
+    checkbox.checked = wallet.allCardsAdded;
+  } else {
+    container.style.display = "none";
+  }
+}
+
 function render() {
+  renderFTUE();
   renderWalletCards();
+  renderAllCardsToggle();
   renderMerchantStatus();
 }
 
 // ── Init ──
 
+function setupWelcomeMode() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("welcome") === "1") {
+    document.body.classList.add("welcome-mode");
+    $("pin-prompt").style.display = "block";
+    $("done-btn-container").style.display = "block";
+    $("done-btn").addEventListener("click", () => {
+      window.close();
+    });
+  }
+}
+
+function setupPinPrompt() {
+  const pinPrompt = $("pin-prompt");
+  const pinDismissed = localStorage.getItem("mopay-pin-dismissed");
+
+  // Show pin prompt if not dismissed (and not in welcome mode where it's always shown)
+  if (!pinDismissed && !document.body.classList.contains("welcome-mode")) {
+    if (!wallet.onboardingComplete) {
+      pinPrompt.style.display = "block";
+    }
+  }
+
+  $("pin-dismiss").addEventListener("click", () => {
+    pinPrompt.style.display = "none";
+    localStorage.setItem("mopay-pin-dismissed", "1");
+  });
+}
+
 async function init() {
+  setupWelcomeMode();
+
   await Promise.all([loadWallet(), detectMerchant()]);
   render();
+  setupPinPrompt();
 
   const searchInput = $("card-search") as HTMLInputElement;
   searchInput.addEventListener("input", () => renderSearch(searchInput.value));
 
+  // Auto-focus search on first visit
+  if (!wallet.onboardingComplete) {
+    searchInput.focus();
+  }
+
   $("find-best-btn").addEventListener("click", showBestCard);
 
-  // Mark onboarding as complete once popup is opened
-  if (!wallet.onboardingComplete) {
-    chrome.runtime.sendMessage({ type: "SET_ONBOARDING_COMPLETE" });
-  }
+  $("all-cards-checkbox").addEventListener("change", async (e) => {
+    const checked = (e.target as HTMLInputElement).checked;
+    wallet = await chrome.runtime.sendMessage({ type: "SET_ALL_CARDS_ADDED", value: checked });
+  });
 }
 
 document.addEventListener("DOMContentLoaded", init);

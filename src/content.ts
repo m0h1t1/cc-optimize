@@ -31,7 +31,7 @@ function createBanner(): HTMLDivElement {
   return banner;
 }
 
-function renderRecommendation(results: RankResult[], category: string) {
+function renderRecommendation(results: RankResult[], category: string, cardCount: number, allCardsAdded: boolean) {
   const banner = createBanner();
 
   const header = document.createElement("div");
@@ -93,6 +93,21 @@ function renderRecommendation(results: RankResult[], category: string) {
   });
 
   banner.appendChild(list);
+
+  // FOMO nudge for users with few cards
+  if (cardCount <= 3 && !allCardsAdded) {
+    const nudge = document.createElement("div");
+    nudge.style.cssText = `
+      padding: 10px 16px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+      font-size: 11px;
+      color: #8892b0;
+    `;
+    const cardWord = cardCount === 1 ? "card" : "cards";
+    nudge.innerHTML = `Only comparing <strong style="color:#64ffda">${cardCount}</strong> ${cardWord} — <span style="color:#64ffda;cursor:pointer;">add more</span> for better recommendations`;
+    banner.appendChild(nudge);
+  }
 }
 
 function renderOnboarding() {
@@ -162,7 +177,7 @@ async function init() {
   const results = rankCards(wallet.userCards, category, wallet.pointValues);
 
   if (results.length > 0) {
-    renderRecommendation(results, category);
+    renderRecommendation(results, category, wallet.userCards.length, wallet.allCardsAdded);
   }
 
   // Watch for card input to detect network

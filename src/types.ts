@@ -37,6 +37,7 @@ export interface UserStorage {
   userCards: string[];
   pointValues: Record<string, number>;
   onboardingComplete: boolean;
+  allCardsAdded: boolean;
 }
 
 export interface CheckoutInfo {

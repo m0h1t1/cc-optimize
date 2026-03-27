@@ -308,34 +308,208 @@
       border-top: 1px solid #e4ece5;
       margin: 0;
     }
+
+    /* First-time onboarding */
+    .ftue-container {
+      display: none;
+      padding: 20px 16px;
+      text-align: center;
+      background: linear-gradient(180deg, #edf5ee 0%, #fff 100%);
+      border-bottom: 1px solid #e4ece5;
+    }
+    .ftue-container .ftue-icon { font-size: 28px; margin-bottom: 8px; }
+    .ftue-container .ftue-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #2d3a2e;
+      margin-bottom: 4px;
+    }
+    .ftue-container .ftue-subtitle {
+      font-size: 12px;
+      color: #7a8f7c;
+      line-height: 1.4;
+    }
+    .ftue-container .ftue-arrow {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #4a9c5e;
+      animation: bounceDown 1.2s infinite;
+    }
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+
+    /* All cards added toggle */
+    .all-cards-toggle {
+      display: none;
+      padding: 6px 0 0;
+    }
+    .all-cards-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #a3b5a5;
+      cursor: pointer;
+    }
+    .all-cards-label input[type="checkbox"] {
+      accent-color: #4a9c5e;
+    }
+
+    /* Pin extension prompt */
+    .pin-prompt {
+      display: none;
+      padding: 16px;
+      background: linear-gradient(135deg, #3a7d4a 0%, #2d6b3e 100%);
+      text-align: center;
+      color: #fff;
+    }
+    .pin-prompt .pin-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .pin-prompt .pin-step-number {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      color: #3a7d4a;
+      font-weight: 800;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pin-prompt .pin-step-text {
+      font-size: 12px;
+      line-height: 1.4;
+      color: rgba(255,255,255,0.95);
+    }
+    .pin-prompt .pin-step-text strong {
+      color: #fff;
+    }
+    .pin-prompt .pin-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+    .pin-prompt .pin-dismiss {
+      display: inline-block;
+      margin-top: 6px;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      font-size: 11px;
+      transition: color 0.15s;
+    }
+    .pin-prompt .pin-dismiss:hover { color: #fff; }
+
+    /* Done button for welcome tab */
+    .done-btn-container {
+      display: none;
+      padding: 12px 16px 16px;
+    }
+    .done-btn {
+      width: 100%;
+      padding: 12px;
+      background: #2d3a2e;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.3px;
+    }
+    .done-btn:hover { background: #1a2e1a; }
+    .done-btn:active { transform: scale(0.98); }
+
+    /* Welcome tab mode — centers the popup in the full page */
+    body.welcome-mode {
+      width: 100%;
+      min-height: 100vh;
+      background: #f0f4f1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 80px;
+    }
+    body.welcome-mode .popup-wrapper {
+      width: 360px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>MoPay</h1>
-    <p>Maximize your credit card rewards</p>
-  </div>
+  <div class="popup-wrapper">
+    <div class="header">
+      <h1>MoPay</h1>
+      <p>Maximize your credit card rewards</p>
+    </div>
 
-  <div class="section">
-    <div class="section-title">Add a Card</div>
-    <input type="text" id="card-search" placeholder="Search cards (e.g. Amex Gold, Chase...)" />
-    <div id="search-results"></div>
-  </div>
+    <div id="pin-prompt" class="pin-prompt">
+      <div class="pin-title">Pin MoPay for Quick Access</div>
+      <div class="pin-step">
+        <div class="pin-step-number">1</div>
+        <div class="pin-step-text">Click the <strong>puzzle piece icon</strong> in your toolbar (top right)</div>
+      </div>
+      <div class="pin-step">
+        <div class="pin-step-number">2</div>
+        <div class="pin-step-text">Find <strong>MoPay</strong> and click the <strong>pin icon</strong> next to it</div>
+      </div>
+      <span class="pin-dismiss" id="pin-dismiss">Got it, I've pinned it</span>
+    </div>
 
-  <hr class="divider" />
+    <div id="onboarding-ftue" class="ftue-container">
+      <div class="ftue-icon">💳</div>
+      <div class="ftue-title">Let's add your first two cards</div>
+      <div class="ftue-subtitle">Add at least two cards so MoPay can compare and find the best one for every purchase.</div>
+      <div class="ftue-arrow">&#8595;</div>
+    </div>
 
-  <div class="section">
-    <div class="section-title">Your Wallet</div>
-    <div id="wallet-cards"></div>
-  </div>
+    <div class="section">
+      <div class="section-title">Add a Card</div>
+      <input type="text" id="card-search" placeholder="Search cards (e.g. Amex Gold, Chase...)" />
+      <div id="search-results"></div>
+    </div>
 
-  <hr class="divider" />
+    <hr class="divider" />
 
-  <div class="section">
-    <div class="section-title">Best Card for This Site</div>
-    <div id="merchant-status"></div>
-    <button id="find-best-btn" class="find-btn" disabled>Find My Best Card</button>
-    <div id="card-result" class="result-container"></div>
+    <div class="section">
+      <div class="section-title">Your Wallet</div>
+      <div id="wallet-cards"></div>
+      <div id="all-cards-toggle" class="all-cards-toggle">
+        <label class="all-cards-label">
+          <input type="checkbox" id="all-cards-checkbox" />
+          <span>I've added all my cards</span>
+        </label>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="section">
+      <div class="section-title">Best Card for This Site</div>
+      <div id="merchant-status"></div>
+      <button id="find-best-btn" class="find-btn" disabled>Find My Best Card</button>
+      <div id="card-result" class="result-container"></div>
+    </div>
+
+    <div id="done-btn-container" class="done-btn-container">
+      <button id="done-btn" class="done-btn">Done — Close This Tab</button>
+    </div>
   </div>
 
   <script src="dist/popup.js"></script>

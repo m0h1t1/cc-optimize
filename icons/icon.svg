@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- Card body -->
+  <rect x="12" y="24" width="104" height="72" rx="12" fill="#2d3a2e"/>
+  <!-- Card stripe -->
+  <rect x="12" y="40" width="104" height="14" fill="#4a9c5e"/>
+  <!-- Checkmark circle -->
+  <circle cx="92" cy="80" r="24" fill="#4a9c5e"/>
+  <path d="M81 80l7 7 15-15" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
