@@ -209,7 +209,7 @@ function renderFTUE() {
     ftue.style.display = "block";
     if (wallet.userCards.length === 1) {
       ftue.querySelector(".ftue-title")!.textContent = "Great! Now add one more card";
-      ftue.querySelector(".ftue-subtitle")!.textContent = "MoPay needs at least two cards to compare and find your best option.";
+      ftue.querySelector(".ftue-subtitle")!.textContent = "Swipe needs at least two cards to compare and find your best option.";
     }
   } else {
     ftue.style.display = "none";
@@ -250,7 +250,7 @@ function setupWelcomeMode() {
 
 function setupPinPrompt() {
   const pinPrompt = $("pin-prompt");
-  const pinDismissed = localStorage.getItem("mopay-pin-dismissed");
+  const pinDismissed = localStorage.getItem("swipe-pin-dismissed");
 
   // Show pin prompt if not dismissed (and not in welcome mode where it's always shown)
   if (!pinDismissed && !document.body.classList.contains("welcome-mode")) {
@@ -261,7 +261,7 @@ function setupPinPrompt() {
 
   $("pin-dismiss").addEventListener("click", () => {
     pinPrompt.style.display = "none";
-    localStorage.setItem("mopay-pin-dismissed", "1");
+    localStorage.setItem("swipe-pin-dismissed", "1");
   });
 }
 

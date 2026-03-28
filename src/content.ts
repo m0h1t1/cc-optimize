@@ -3,7 +3,7 @@ import { getMerchantCategories } from "./categories";
 import { rankCards } from "./rank";
 import type { Network, RankResult, UserStorage } from "./types";
 
-const BANNER_ID = "mopay-recommendation-banner";
+const BANNER_ID = "swipe-recommendation-banner";
 
 function dismissBanner(banner: HTMLElement, toastMessage?: string) {
   banner.style.opacity = "0";
@@ -81,24 +81,24 @@ function renderRecommendation(results: RankResult[], categories: string[], cardC
   `;
   const headerLeft = document.createElement("div");
   headerLeft.innerHTML = `
-    <div style="font-weight:700;font-size:15px;color:#fff;">MoPay</div>
+    <div style="font-weight:700;font-size:15px;color:#fff;">Swipe</div>
     <div style="font-size:11px;color:#8892b0;margin-top:2px;">
       Best card for <strong style="color:#64ffda">${bestCategory}</strong>
-      <span class="mopay-wrong-cat" style="color:#555e70;cursor:pointer;margin-left:4px;font-size:10px;">wrong?</span>
+      <span class="swipe-wrong-cat" style="color:#555e70;cursor:pointer;margin-left:4px;font-size:10px;">wrong?</span>
     </div>
   `;
   header.appendChild(headerLeft);
 
   // "Wrong category?" handler
-  const wrongLink = headerLeft.querySelector(".mopay-wrong-cat");
+  const wrongLink = headerLeft.querySelector(".swipe-wrong-cat");
   if (wrongLink) {
     wrongLink.addEventListener("click", (e) => {
       e.stopPropagation();
-      const existing = banner.querySelector(".mopay-cat-picker");
+      const existing = banner.querySelector(".swipe-cat-picker");
       if (existing) { existing.remove(); return; }
 
       const picker = document.createElement("div");
-      picker.className = "mopay-cat-picker";
+      picker.className = "swipe-cat-picker";
       picker.style.cssText = `
         padding: 8px 16px; background: #16213e;
         border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -161,7 +161,7 @@ function renderRecommendation(results: RankResult[], categories: string[], cardC
   hideBtn.onclick = () => {
     const domain = window.location.hostname;
     chrome.runtime.sendMessage({ type: "HIDE_SITE", domain });
-    dismissBanner(banner, "Hidden — click MoPay icon to re-enable");
+    dismissBanner(banner, "Hidden — click Swipe icon to re-enable");
   };
   hideFooter.appendChild(hideBtn);
 
@@ -211,8 +211,8 @@ function renderRecommendation(results: RankResult[], categories: string[], cardC
       color: #8892b0;
     `;
     const cardWord = cardCount === 1 ? "card" : "cards";
-    nudge.innerHTML = `Only comparing <strong style="color:#64ffda">${cardCount}</strong> ${cardWord} — <span class="mopay-add-more" style="color:#64ffda;cursor:pointer;">add more</span> for better recommendations`;
-    const addMoreLink = nudge.querySelector(".mopay-add-more");
+    nudge.innerHTML = `Only comparing <strong style="color:#64ffda">${cardCount}</strong> ${cardWord} — <span class="swipe-add-more" style="color:#64ffda;cursor:pointer;">add more</span> for better recommendations`;
+    const addMoreLink = nudge.querySelector(".swipe-add-more");
     if (addMoreLink) {
       addMoreLink.addEventListener("click", () => {
         chrome.runtime.sendMessage({ type: "OPEN_POPUP" });
@@ -229,11 +229,11 @@ function renderOnboarding() {
   banner.innerHTML = `
     <div style="padding:20px;text-align:center;">
       <div style="font-size:24px;margin-bottom:8px;">💳</div>
-      <div style="font-weight:700;font-size:16px;color:#fff;margin-bottom:6px;">MoPay</div>
+      <div style="font-weight:700;font-size:16px;color:#fff;margin-bottom:6px;">Swipe</div>
       <div style="color:#8892b0;font-size:13px;margin-bottom:14px;">
         Add your cards to get personalized recommendations at checkout.
       </div>
-      <div style="font-size:12px;color:#64ffda;">Click the MoPay icon in your toolbar to get started.</div>
+      <div style="font-size:12px;color:#64ffda;">Click the Swipe icon in your toolbar to get started.</div>
     </div>
   `;
   const closeBtn = document.createElement("button");
@@ -251,12 +251,12 @@ function renderNetworkPrompt(network: Network) {
   const banner = createBanner();
   banner.innerHTML = `
     <div style="padding:16px;text-align:center;">
-      <div style="font-size:13px;color:#8892b0;margin-bottom:6px;">MoPay detected a card</div>
+      <div style="font-size:13px;color:#8892b0;margin-bottom:6px;">Swipe detected a card</div>
       <div style="font-weight:700;font-size:15px;color:#fff;margin-bottom:12px;">
         Looks like a <span style="color:#64ffda">${network}</span> card
       </div>
       <div style="font-size:12px;color:#8892b0;">
-        Want to add it? Click the MoPay icon in your toolbar.
+        Want to add it? Click the Swipe icon in your toolbar.
       </div>
     </div>
   `;

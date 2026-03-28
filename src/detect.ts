@@ -250,8 +250,8 @@ export function observeCardInput(
     ));
 
     for (const input of inputs) {
-      if (input.dataset.mopayListening) continue;
-      input.dataset.mopayListening = "true";
+      if (input.dataset.swipeListening) continue;
+      input.dataset.swipeListening = "true";
 
       input.addEventListener("input", () => {
         const val = input.value.replace(/\s|-/g, "");

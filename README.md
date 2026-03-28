@@ -1,18 +1,18 @@
-# MoPay
+# Swipe
 
 **Stop leaving money on the table every time you check out.**
 
-MoPay is a Chrome extension that tells you which credit card to use at checkout so you always earn the most rewards. No spreadsheets, no guessing — just open the popup and it shows you the best card for where you're shopping.
+Swipe is a Chrome extension that tells you which credit card to use at checkout so you always earn the most rewards. No spreadsheets, no guessing — just open the popup and it shows you the best card for where you're shopping.
 
 ---
 
 ## How It Works
 
 1. **Add your cards** — Search and add the credit cards you carry (we support 20+ popular cards across Amex, Chase, Citi, Capital One, Discover, and more).
-2. **Shop like normal** — MoPay detects when you're on a checkout page and automatically identifies the merchant category (dining, grocery, travel, gas, streaming, etc.).
+2. **Shop like normal** — Swipe detects when you're on a checkout page and automatically identifies the merchant category (dining, grocery, travel, gas, streaming, etc.).
 3. **Use the best card** — A recommendation pops up showing which card earns you the most, ranked by effective rewards rate in cents per dollar.
 
-MoPay handles the math behind category bonuses, rotating quarterly categories, point valuations, and cashback rates so you don't have to.
+Swipe handles the math behind category bonuses, rotating quarterly categories, point valuations, and cashback rates so you don't have to.
 
 ## Features
 
@@ -40,7 +40,7 @@ Then load it in Chrome:
 1. Go to `chrome://extensions`
 2. Enable **Developer mode** (top right)
 3. Click **Load unpacked** and select this project folder
-4. Pin MoPay to your toolbar for quick access
+4. Pin Swipe to your toolbar for quick access
 
 ## Supported Cards
 
