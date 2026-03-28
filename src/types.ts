@@ -38,6 +38,8 @@ export interface UserStorage {
   pointValues: Record<string, number>;
   onboardingComplete: boolean;
   allCardsAdded: boolean;
+  hiddenSites: string[];
+  siteCategories: Record<string, string[]>;
 }
 
 export interface CheckoutInfo {

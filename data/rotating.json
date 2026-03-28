@@ -1,14 +1,14 @@
 {
   "discover_it": {
-    "Q1": ["grocery", "drugstore"],
-    "Q2": ["gas", "transit"],
-    "Q3": ["dining", "paypal"],
+    "Q1": ["grocery", "streaming"],
+    "Q2": ["dining", "home_improvement"],
+    "Q3": ["gas", "transit"],
     "Q4": ["amazon", "general"]
   },
   "chase_freedom_flex": {
-    "Q1": ["grocery"],
-    "Q2": ["gas", "hotels"],
-    "Q3": ["dining"],
-    "Q4": ["amazon", "general"]
+    "Q1": ["dining"],
+    "Q2": ["amazon", "whole_foods"],
+    "Q3": ["gas", "streaming"],
+    "Q4": ["grocery", "fitness"]
   }
 }

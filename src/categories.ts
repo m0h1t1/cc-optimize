@@ -1,21 +1,20 @@
 import categoryMap from "../data/categories.json";
 
-const CATEGORY_MAP: Record<string, string> = categoryMap;
+const CATEGORY_MAP: Record<string, string[]> = categoryMap;
 
-export function getMerchantCategory(hostname: string): string {
+export function getMerchantCategories(hostname: string): string[] {
   const domain = hostname.replace(/^www\./, "").toLowerCase();
 
   if (CATEGORY_MAP[domain]) {
     return CATEGORY_MAP[domain];
   }
 
-  // Check partial matches (e.g., "amazon.com/fresh" won't match here,
-  // but "something.amazon.com" should match "amazon.com")
-  for (const [key, category] of Object.entries(CATEGORY_MAP)) {
+  // Check partial matches (e.g., "something.amazon.com" should match "amazon.com")
+  for (const [key, categories] of Object.entries(CATEGORY_MAP)) {
     if (key !== "_default" && domain.endsWith(key)) {
-      return category;
+      return categories;
     }
   }
 
-  return CATEGORY_MAP["_default"] || "general";
+  return CATEGORY_MAP["_default"] || ["general"];
 }

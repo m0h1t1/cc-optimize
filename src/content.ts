@@ -1,9 +1,37 @@
 import { detectCheckout, detectNetwork, observeCardInput } from "./detect";
-import { getMerchantCategory } from "./categories";
+import { getMerchantCategories } from "./categories";
 import { rankCards } from "./rank";
 import type { Network, RankResult, UserStorage } from "./types";
 
 const BANNER_ID = "mopay-recommendation-banner";
+
+function dismissBanner(banner: HTMLElement, toastMessage?: string) {
+  banner.style.opacity = "0";
+  banner.style.transform = "translateY(10px)";
+  banner.style.transition = "opacity 0.25s ease, transform 0.25s ease";
+
+  setTimeout(() => {
+    banner.remove();
+
+    if (toastMessage) {
+      const toast = document.createElement("div");
+      toast.style.cssText = `
+        position: fixed; bottom: 24px; right: 24px; z-index: 2147483647;
+        background: #1a1a2e; color: #8892b0; padding: 10px 16px;
+        border-radius: 8px; font-size: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        opacity: 0; transition: opacity 0.3s ease;
+      `;
+      toast.textContent = toastMessage;
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => { toast.style.opacity = "1"; });
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+  }, 250);
+}
 
 function createBanner(): HTMLDivElement {
   const existing = document.getElementById(BANNER_ID);
@@ -25,14 +53,22 @@ function createBanner(): HTMLDivElement {
     font-size: 14px;
     z-index: 2147483647;
     overflow: hidden;
-    transition: opacity 0.2s;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    transform: translateY(0);
   `;
   document.body.appendChild(banner);
   return banner;
 }
 
-function renderRecommendation(results: RankResult[], category: string, cardCount: number, allCardsAdded: boolean) {
+function renderRecommendation(results: RankResult[], categories: string[], cardCount: number, allCardsAdded: boolean) {
   const banner = createBanner();
+
+  // Extract the matched category from the top card's reason (e.g., "4x on dining" → "dining")
+  const topReason = results[0]?.reason || "";
+  const reasonMatch = topReason.match(/on\s+(.+?)(?:\s*\(|$)/);
+  const bestCategory = reasonMatch?.[1] === "all purchases"
+    ? categories[0]
+    : (reasonMatch?.[1] || categories[0]);
 
   const header = document.createElement("div");
   header.style.cssText = `
@@ -43,21 +79,91 @@ function renderRecommendation(results: RankResult[], category: string, cardCount
     align-items: center;
     border-bottom: 1px solid rgba(255,255,255,0.1);
   `;
-  header.innerHTML = `
-    <div>
-      <div style="font-weight:700;font-size:15px;color:#fff;">MoPay</div>
-      <div style="font-size:11px;color:#8892b0;margin-top:2px;">Best card for <strong style="color:#64ffda">${category}</strong></div>
+  const headerLeft = document.createElement("div");
+  headerLeft.innerHTML = `
+    <div style="font-weight:700;font-size:15px;color:#fff;">MoPay</div>
+    <div style="font-size:11px;color:#8892b0;margin-top:2px;">
+      Best card for <strong style="color:#64ffda">${bestCategory}</strong>
+      <span class="mopay-wrong-cat" style="color:#555e70;cursor:pointer;margin-left:4px;font-size:10px;">wrong?</span>
     </div>
   `;
+  header.appendChild(headerLeft);
+
+  // "Wrong category?" handler
+  const wrongLink = headerLeft.querySelector(".mopay-wrong-cat");
+  if (wrongLink) {
+    wrongLink.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const existing = banner.querySelector(".mopay-cat-picker");
+      if (existing) { existing.remove(); return; }
+
+      const picker = document.createElement("div");
+      picker.className = "mopay-cat-picker";
+      picker.style.cssText = `
+        padding: 8px 16px; background: #16213e;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        display: flex; align-items: center; gap: 8px;
+        font-size: 12px; color: #8892b0;
+      `;
+      const label = document.createElement("span");
+      label.textContent = "Category:";
+      const select = document.createElement("select");
+      select.style.cssText = `
+        background: #1a1a2e; color: #64ffda; border: 1px solid rgba(100,255,218,0.3);
+        border-radius: 4px; padding: 3px 6px; font-size: 11px; cursor: pointer;
+        outline: none;
+      `;
+      for (const cat of AVAILABLE_CATEGORIES) {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat.replace(/_/g, " ");
+        if (cat === bestCategory) opt.selected = true;
+        select.appendChild(opt);
+      }
+      select.onchange = () => {
+        const domain = window.location.hostname;
+        const newCats = [select.value];
+        chrome.runtime.sendMessage({ type: "SET_SITE_CATEGORY", domain, categories: newCats });
+        // Re-render with new category
+        showBanner();
+      };
+      picker.appendChild(label);
+      picker.appendChild(select);
+      // Insert after header
+      header.after(picker);
+    });
+  }
   const closeBtn = document.createElement("button");
   closeBtn.textContent = "\u00d7";
   closeBtn.style.cssText = `
     background:none;border:none;color:#8892b0;font-size:22px;cursor:pointer;
     padding:0 4px;line-height:1;
   `;
-  closeBtn.onclick = () => banner.remove();
+  closeBtn.onclick = () => dismissBanner(banner);
   header.appendChild(closeBtn);
   banner.appendChild(header);
+
+  // "Don't show on this site" footer
+  const hideFooter = document.createElement("div");
+  hideFooter.style.cssText = `
+    padding: 8px 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    text-align: center;
+  `;
+  const hideBtn = document.createElement("button");
+  hideBtn.textContent = "Don\u2019t show on this site";
+  hideBtn.style.cssText = `
+    background: none; border: none; color: #555e70; font-size: 11px;
+    cursor: pointer; padding: 2px 0;
+  `;
+  hideBtn.onmouseenter = () => { hideBtn.style.color = "#8892b0"; };
+  hideBtn.onmouseleave = () => { hideBtn.style.color = "#555e70"; };
+  hideBtn.onclick = () => {
+    const domain = window.location.hostname;
+    chrome.runtime.sendMessage({ type: "HIDE_SITE", domain });
+    dismissBanner(banner, "Hidden — click MoPay icon to re-enable");
+  };
+  hideFooter.appendChild(hideBtn);
 
   const list = document.createElement("div");
   list.style.cssText = "padding: 8px 0; max-height: 280px; overflow-y: auto;";
@@ -105,9 +211,17 @@ function renderRecommendation(results: RankResult[], category: string, cardCount
       color: #8892b0;
     `;
     const cardWord = cardCount === 1 ? "card" : "cards";
-    nudge.innerHTML = `Only comparing <strong style="color:#64ffda">${cardCount}</strong> ${cardWord} — <span style="color:#64ffda;cursor:pointer;">add more</span> for better recommendations`;
+    nudge.innerHTML = `Only comparing <strong style="color:#64ffda">${cardCount}</strong> ${cardWord} — <span class="mopay-add-more" style="color:#64ffda;cursor:pointer;">add more</span> for better recommendations`;
+    const addMoreLink = nudge.querySelector(".mopay-add-more");
+    if (addMoreLink) {
+      addMoreLink.addEventListener("click", () => {
+        chrome.runtime.sendMessage({ type: "OPEN_POPUP" });
+      });
+    }
     banner.appendChild(nudge);
   }
+
+  banner.appendChild(hideFooter);
 }
 
 function renderOnboarding() {
@@ -156,16 +270,19 @@ function renderNetworkPrompt(network: Network) {
   banner.appendChild(closeBtn);
 }
 
-async function init() {
-  // Wait a moment for page to render
-  await new Promise((r) => setTimeout(r, 1000));
+const AVAILABLE_CATEGORIES = [
+  "dining", "grocery", "travel", "flights", "hotels", "streaming",
+  "entertainment", "gas", "transit", "drugstore", "home_improvement",
+  "fitness", "amazon", "apple", "paypal", "general"
+];
 
-  if (!detectCheckout()) return;
-
+async function showBanner() {
   const domain = window.location.hostname;
-  const category = getMerchantCategory(domain);
-
   const wallet: UserStorage = await chrome.runtime.sendMessage({ type: "GET_WALLET" });
+
+  // Use user-set category if available, otherwise detect from domain
+  const userCategories = wallet.siteCategories?.[domain];
+  const categories = userCategories || getMerchantCategories(domain);
 
   if (!wallet.userCards.length) {
     if (!wallet.onboardingComplete) {
@@ -174,10 +291,10 @@ async function init() {
     return;
   }
 
-  const results = rankCards(wallet.userCards, category, wallet.pointValues);
+  const results = rankCards(wallet.userCards, categories, wallet.pointValues);
 
   if (results.length > 0) {
-    renderRecommendation(results, category, wallet.userCards.length, wallet.allCardsAdded);
+    renderRecommendation(results, categories, wallet.userCards.length, wallet.allCardsAdded);
   }
 
   // Watch for card input to detect network
@@ -192,5 +309,34 @@ async function init() {
     }
   });
 }
+
+async function init() {
+  // Wait a moment for page to render
+  await new Promise((r) => setTimeout(r, 1000));
+
+  if (!detectCheckout()) return;
+
+  const domain = window.location.hostname;
+
+  // Check if user has hidden this site
+  const wallet: UserStorage = await chrome.runtime.sendMessage({ type: "GET_WALLET" });
+  const hiddenSites = wallet.hiddenSites || [];
+  if (hiddenSites.includes(domain)) return;
+
+  showBanner();
+}
+
+// Listen for popup open — unhide the current site and show the banner
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === "POPUP_OPENED") {
+    const domain = window.location.hostname;
+    chrome.runtime.sendMessage({ type: "UNHIDE_SITE", domain });
+    // Re-show banner if on a checkout page
+    if (detectCheckout()) {
+      const existing = document.getElementById(BANNER_ID);
+      if (!existing) showBanner();
+    }
+  }
+});
 
 init();

@@ -1,5 +1,5 @@
 import { getAllCards, rankCards } from "./rank";
-import { getMerchantCategory } from "./categories";
+import { getMerchantCategories } from "./categories";
 import type { Card, UserStorage } from "./types";
 
 const allCards = getAllCards();
@@ -9,10 +9,12 @@ let wallet: UserStorage = {
   pointValues: {},
   onboardingComplete: false,
   allCardsAdded: false,
+  hiddenSites: [],
+  siteCategories: {},
 };
 
 let detectedDomain: string | null = null;
-let detectedCategory: string | null = null;
+let detectedCategories: string[] | null = null;
 
 // ── DOM helpers ──
 
@@ -50,16 +52,16 @@ async function detectMerchant(): Promise<void> {
       // Skip chrome internal pages
       if (url.protocol === "chrome:" || url.protocol === "chrome-extension:") {
         detectedDomain = null;
-        detectedCategory = null;
+        detectedCategories = null;
         return;
       }
 
       detectedDomain = hostname;
-      detectedCategory = getMerchantCategory(hostname);
+      detectedCategories = getMerchantCategories(hostname);
     }
   } catch {
     detectedDomain = null;
-    detectedCategory = null;
+    detectedCategories = null;
   }
 }
 
@@ -158,21 +160,21 @@ function renderMerchantStatus() {
     <div class="merchant-info">
       <div class="merchant-dot"></div>
       <span class="merchant-domain">${detectedDomain}</span>
-      <span class="merchant-category">${detectedCategory}</span>
+      <span class="merchant-category">${detectedCategories?.[0] ?? "general"}</span>
     </div>
   `;
 
   const hasCards = wallet.userCards.length > 0;
   btn.disabled = !hasCards;
   btn.textContent = hasCards
-    ? `Find My Best Card for ${detectedCategory}`
+    ? `Find My Best Card for ${detectedCategories?.[0] ?? "general"}`
     : "Add a card first";
 }
 
 function showBestCard() {
-  if (!detectedCategory || wallet.userCards.length === 0) return;
+  if (!detectedCategories || wallet.userCards.length === 0) return;
 
-  const results = rankCards(wallet.userCards, detectedCategory, wallet.pointValues);
+  const results = rankCards(wallet.userCards, detectedCategories, wallet.pointValues);
   if (results.length === 0) return;
 
   const top = results[0];
@@ -269,6 +271,15 @@ async function init() {
   await Promise.all([loadWallet(), detectMerchant()]);
   render();
   setupPinPrompt();
+
+  // Notify the active tab's content script that the popup was opened (unhides the site)
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab?.id) {
+      chrome.tabs.sendMessage(tab.id, { type: "POPUP_OPENED" });
+    }
+  } catch {}
+
 
   const searchInput = $("card-search") as HTMLInputElement;
   searchInput.addEventListener("input", () => renderSearch(searchInput.value));

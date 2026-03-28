@@ -23,20 +23,35 @@ export function getAllCards(): Card[] {
   return CARDS_DB;
 }
 
-function getEffectiveRate(
+function getEffectiveRateForCategory(
   card: Card,
-  category: string,
-  cppOverride?: number
-): { rate: number; isRotating: boolean } {
+  category: string
+): { rate: number; isRotating: boolean; category: string } {
   const quarter = getCurrentQuarter();
   const rotating = ROTATING_DB[card.id];
 
   if (rotating?.[quarter]?.includes(category)) {
-    return { rate: ROTATING_BONUS_RATE, isRotating: true };
+    return { rate: ROTATING_BONUS_RATE, isRotating: true, category };
   }
 
   const rate = card.category_rates[category] ?? card.base_rate;
-  return { rate, isRotating: false };
+  return { rate, isRotating: false, category };
+}
+
+function getBestRate(
+  card: Card,
+  categories: string[]
+): { rate: number; isRotating: boolean; category: string } {
+  let best = { rate: card.base_rate, isRotating: false, category: "general" };
+
+  for (const cat of categories) {
+    const result = getEffectiveRateForCategory(card, cat);
+    if (result.rate > best.rate) {
+      best = result;
+    }
+  }
+
+  return best;
 }
 
 export function buildReason(
@@ -56,7 +71,7 @@ export function buildReason(
 
 export function rankCards(
   userCardIds: string[],
-  category: string,
+  categories: string[],
   cppOverrides: Record<string, number> = {}
 ): RankResult[] {
   const results: RankResult[] = [];
@@ -66,7 +81,7 @@ export function rankCards(
     if (!card) continue;
 
     const cpp = cppOverrides[cardId] ?? card.point_value_cpp;
-    const { rate, isRotating } = getEffectiveRate(card, category, cpp);
+    const { rate, isRotating, category } = getBestRate(card, categories);
     const effectiveRate = rate * cpp;
 
     results.push({

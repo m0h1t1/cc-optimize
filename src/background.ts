@@ -5,6 +5,8 @@ const DEFAULT_STORAGE: UserStorage = {
   pointValues: {},
   onboardingComplete: false,
   allCardsAdded: false,
+  hiddenSites: [],
+  siteCategories: {},
 };
 
 async function getStorage(): Promise<UserStorage> {
@@ -73,6 +75,43 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       data.allCardsAdded = message.value;
       await setStorage({ allCardsAdded: data.allCardsAdded });
       sendResponse(data);
+    });
+    return true;
+  }
+
+  if (message.type === "HIDE_SITE") {
+    getStorage().then(async (data) => {
+      const sites = data.hiddenSites || [];
+      if (!sites.includes(message.domain)) {
+        sites.push(message.domain);
+        await setStorage({ hiddenSites: sites });
+      }
+      sendResponse(true);
+    });
+    return true;
+  }
+
+  if (message.type === "OPEN_POPUP") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("popup.html") });
+    sendResponse(true);
+    return true;
+  }
+
+  if (message.type === "SET_SITE_CATEGORY") {
+    getStorage().then(async (data) => {
+      const cats = data.siteCategories || {};
+      cats[message.domain] = message.categories;
+      await setStorage({ siteCategories: cats });
+      sendResponse(true);
+    });
+    return true;
+  }
+
+  if (message.type === "UNHIDE_SITE") {
+    getStorage().then(async (data) => {
+      const sites = (data.hiddenSites || []).filter((s: string) => s !== message.domain);
+      await setStorage({ hiddenSites: sites });
+      sendResponse(true);
     });
     return true;
   }
